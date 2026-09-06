@@ -4,6 +4,11 @@ Courtly is a mobile application built with **Expo, React Native, and TypeScript*
 
 The application uses modern React Native and Expo technologies to provide a smooth user experience, including secure authentication storage, optimized image rendering, haptic feedback, shimmer skeleton loading, and controlled application initialization.
 
+## 🎥 Demo
+### Video Demo
+Watch the complete application flow :
+> 📹 https://drive.google.com/file/d/1s3r2sNAILz2l_DMcjDr7pQN05KTtTGBk/view?usp=sharing
+
 ---
 
 ## 🚀 Tech Stack
@@ -121,11 +126,11 @@ Courtly uses `expo-secure-store` to store the user's **`token`** and **`user`** 
 ```tsx
 import * as SecureStore from "expo-secure-store";
 
-// Save authentication data
+// save auth data
 await SecureStore.setItemAsync("token", token);
 await SecureStore.setItemAsync("user", JSON.stringify(user));
 
-// Restore authentication data
+// restore auth data
 const token = await SecureStore.getItemAsync("token");
 const userData = await SecureStore.getItemAsync("user");
 
