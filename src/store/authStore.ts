@@ -33,5 +33,6 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 }));
 
+
 export const getAuthToken = () => useAuthStore.getState().token;
 export const clearAuthSession = () => useAuthStore.getState().clearSession();
