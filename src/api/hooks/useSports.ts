@@ -3,10 +3,6 @@ import { apiClient } from "../client";
 import { endpoints } from "../endpoints";
 import { Sport } from "../types";
 
-/**
- * Sports rarely change, so cache aggressively (30 min) instead of refetching
- * every time the facilities screen mounts.
- */
 export function useSports() {
   return useQuery({
     queryKey: ["sports"],

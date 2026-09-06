@@ -1,0 +1,8 @@
+const formatAmenity = (amenity: string) => {
+  return amenity
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+};
+
+export default formatAmenity;

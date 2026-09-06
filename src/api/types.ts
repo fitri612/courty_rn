@@ -21,14 +21,12 @@ export interface LoginPayload {
   password: string;
 }
 
-// ---- Sports ----
 export interface Sport {
   id: string;
   name: string;
   slug: string;
 }
 
-// ---- Facilities ----
 export interface Facility {
   id: string;
   name: string;
@@ -75,7 +73,6 @@ export interface FacilityFilters {
 export type CourtType = "STANDARD" | "PANORAMIC" | string;
 
 
-// ---- Availability ----
 export interface AvailabilitySlot {
   startTime: string; 
   endTime: string;
@@ -96,7 +93,7 @@ export interface AvailabilityResponse {
   courts: AvailabilityCourt[];
 }
 
-// ---- Bookings ----
+// ---- DEFAULT Bookings ----
 export type BookingStatusFilter = "UPCOMING" | "PAST" | "CANCELLED";
 export type BookingRecordStatus = "CONFIRMED" | "CANCELLED" | "COMPLETED" | string;
  
@@ -117,6 +114,10 @@ export interface Booking {
   startTime: string;
   endTime: string;
   totalPrice: number;
+  price: number;
+  serviceFee: number;
+  createdAt: string;
+  updatedAt: string;
 }
  
 export interface CreateBookingPayload {

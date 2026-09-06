@@ -1,0 +1,8 @@
+const formatPrice = (price: number) => {
+  return price.toLocaleString('id-ID', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+};
+
+export default formatPrice;

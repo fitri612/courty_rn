@@ -1,140 +1,134 @@
-import { useFacilities } from "@/api/hooks/useFacilities";
-import { useSports } from "@/api/hooks/useSports";
-import { Facility, Sport } from "@/api/types";
-import { Image } from "expo-image";
-import { router } from "expo-router";
-import { useMemo, useState } from "react";
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { useFacilities } from '@/api/hooks/useFacilities';
+import { useSports } from '@/api/hooks/useSports';
+import { Facility, Sport } from '@/api/types';
+import { ItemTabMenu } from '@/components/common/Card/item-menu';
+import { FacilityCard } from '@/components/common/facility-card';
+import { FacilitySkeleton } from '@/components/common/skeleton/facility-skeleton';
+import { TabSkeleton } from '@/components/common/skeleton/tab-skeleton';
+import { HeaderPrimary } from '@/components/header';
+import { useAuthStore } from '@/store/authStore';
+import { useMemo, useState } from 'react';
+import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
 
-const ALL_SPORTS: Sport = { id: "all", name: "All", slug: "" };
+const ALL_SPORTS: Sport = { id: 'all', name: 'All', slug: '' };
 
 export default function FacilitiesScreen() {
-  const [search, setSearch] = useState("");
-  const [sport, setSport] = useState<Sport>(ALL_SPORTS);
+	const [search, setSearch] = useState('');
+	const [sport, setSport] = useState<Sport>(ALL_SPORTS);
+	const user = useAuthStore((s) => s.user);
 
-  const { data: sportsData, isLoading: isLoadingSports } = useSports();
-  const sportChips = useMemo(() => [ALL_SPORTS, ...(sportsData ?? [])], [sportsData]);
+	const { data: sportsData, isLoading: isLoadingSports } = useSports();
+	const sportChips = useMemo(() => [ALL_SPORTS, ...(sportsData ?? [])], [sportsData]);
 
-  const filters = useMemo(
-    () => ({
-      search: search || undefined,
-      sport: sport.slug || undefined,
-    }),
-    [search, sport]
-  );
+	const filters = useMemo(
+		() => ({
+			search: search || undefined,
+			sport: sport.slug || undefined,
+		}),
+		[search, sport]
+	);
 
-  const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useFacilities(filters);
+	const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useFacilities(filters);
+	const facilities = data?.pages.flatMap((p) => p.data) ?? [];
 
-  const facilities = data?.pages.flatMap((p) => p.data) ?? [];
+	return (
+		<View style={styles.container}>
+			{/* Header Banner Gelap */}
+			<View style={styles.heroSection}>
+				<HeaderPrimary userName={user?.name} />
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Find a court</Text>
+				<Text style={styles.heroTitle}>Ready to book your court?</Text>
 
-      <TextInput
-        style={styles.search}
-        placeholder="Search facilities or city"
-        value={search}
-        onChangeText={setSearch}
-      />
+				<View style={styles.searchBox}>
+					<TextInput style={styles.searchInput} placeholder="Search Facilities or Cities..." placeholderTextColor="#94A3B8" value={search} onChangeText={setSearch} />
+				</View>
+			</View>
 
-      {isLoadingSports ? (
-        <ActivityIndicator style={{ alignSelf: "flex-start", marginBottom: 12 }} />
-      ) : (
-        <FlatList
-          horizontal
-          data={sportChips}
-          keyExtractor={(s) => s.id}
-          showsHorizontalScrollIndicator={false}
-          style={styles.chipRow}
-          renderItem={({ item }) => (
-            <Pressable
-              style={[styles.chip, sport.id === item.id && styles.chipActive]}
-              onPress={() => setSport(item)}
-            >
-              <Text
-                style={[styles.chipText, sport.id === item.id && styles.chipTextActive]}
-                numberOfLines={1}
-              >
-                {item.name}
-              </Text>
-            </Pressable>
-          )}
-        />
-      )}
+			{/* Sport Chips Filter */}
+			<View style={styles.chipContainer}>
+				{isLoadingSports ? (
+					<TabSkeleton count={5} />
+				) : (
+					<FlatList
+						horizontal
+						data={sportChips}
+						keyExtractor={(s) => s.id}
+						showsHorizontalScrollIndicator={false}
+						contentContainerStyle={{ paddingHorizontal: 16 }}
+						renderItem={({ item }) => {
+							const isActive = sport.id === item.id;
+							return <ItemTabMenu item={item} isActive={isActive} onPress={setSport} />;
+						}}
+					/>
+				)}
+			</View>
 
-      {isLoading && <ActivityIndicator style={{ marginTop: 24 }} />}
-      {isError && <Text style={styles.error}>Couldn't load facilities. Pull to retry.</Text>}
+			{/* Content List */}
+			<View style={styles.contentContainer}>
+				{isLoading && <FacilitySkeleton />}
+				{isError && <Text style={styles.error}>Couldn't load facilities. Pull to retry.</Text>}
 
-      <FlatList
-        data={facilities}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={{ paddingBottom: 24 }}
-        onEndReachedThreshold={0.4}
-        onEndReached={() => hasNextPage && fetchNextPage()}
-        ListFooterComponent={isFetchingNextPage ? <ActivityIndicator /> : null}
-        renderItem={({ item }: { item: Facility }) => (
-          <Pressable style={styles.card} onPress={() => router.push(`/facility/${item.id}`)}>
-            <Image source={{ uri: item.imageUrl }} style={styles.cardImage} contentFit="cover" transition={200} />
-            <View style={styles.cardBody}>
-              <Text style={styles.cardTitle}>{item.name}</Text>
-              <Text style={styles.cardSubtitle}>
-                {item.location} · {item.distanceKm.toFixed(1)} km
-              </Text>
-              <View style={styles.cardMetaRow}>
-                <Text style={styles.rating}>
-                  ★ {item.rating.toFixed(1)} ({item.reviewCount})
-                </Text>
-                <Text style={styles.price}>from Rp{item.startingPrice.toLocaleString("id-ID")}</Text>
-              </View>
-            </View>
-          </Pressable>
-        )}
-      />
-    </View>
-  );
+				<FlatList
+					data={facilities}
+					keyExtractor={(item) => item.id}
+					contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 14, paddingBottom: 40 }}
+					onEndReachedThreshold={0.4}
+					onEndReached={() => hasNextPage && fetchNextPage()}
+					ListFooterComponent={isFetchingNextPage ? <FacilitySkeleton /> : null}
+					renderItem={({ item }: { item: Facility }) => <FacilityCard item={item} />}
+				/>
+			</View>
+		</View>
+	);
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", paddingTop: 60, paddingHorizontal: 16 },
-  header: { fontSize: 26, fontWeight: "700", marginBottom: 16 },
-  search: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 15,
-    marginBottom: 12,
-  },
-  chipRow: { marginBottom: 12, flexGrow: 0, height: 50 },
-  chip: {
-    minWidth: 92,
-    height: 36,
-    paddingHorizontal: 14,
-    borderRadius: 20,
-    backgroundColor: "#F1F5F9",
-    marginRight: 8,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  chipActive: { backgroundColor: "#0F172A" },
-  chipText: { color: "#334155", fontSize: 13 },
-  chipTextActive: { color: "#fff" },
-  error: { color: "#e11d48", marginTop: 16 },
-  card: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#eee",
-    borderRadius: 14,
-    marginBottom: 12,
-    overflow: "hidden",
-  },
-  cardImage: { width: 100, height: 100, backgroundColor: "#F1F5F9" },
-  cardBody: { flex: 1, padding: 12, justifyContent: "center" },
-  cardTitle: { fontSize: 16, fontWeight: "600" },
-  cardSubtitle: { color: "#666", marginTop: 2, fontSize: 13 },
-  cardMetaRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 8 },
-  rating: { fontSize: 13, color: "#B45309" },
-  price: { fontSize: 13, fontWeight: "600" },
+	container: { flex: 1, backgroundColor: '#F8FAFC' },
+	heroSection: {
+		backgroundColor: '#0F172A',
+		paddingTop: 54,
+		paddingHorizontal: 20,
+		paddingBottom: 24,
+		borderBottomLeftRadius: 28,
+		borderBottomRightRadius: 28,
+	},
+	userRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 14 },
+	avatarContainer: {
+		width: 36,
+		height: 36,
+		borderRadius: 18,
+		backgroundColor: '#334155',
+		alignItems: 'center',
+		justifyContent: 'center',
+		marginRight: 10,
+	},
+	avatarText: {
+		color: '#fff',
+		fontWeight: 'bold',
+		fontSize: 16,
+		fontFamily: 'Poppins-Bold',
+	},
+	greeting: {
+		color: '#F1F5F9',
+		fontSize: 16,
+		fontFamily: 'Poppins-Medium',
+	},
+	heroTitle: {
+		color: '#fff',
+		fontSize: 16,
+		marginBottom: 16,
+		lineHeight: 32,
+		fontFamily: 'Poppins-Bold',
+	},
+	searchBox: {
+		backgroundColor: '#1E293B',
+		borderRadius: 14,
+		paddingHorizontal: 14,
+		height: 48,
+		justifyContent: 'center',
+	},
+	searchInput: { color: '#fff', fontSize: 12, fontFamily: 'Poppins-Regular' },
+	chipContainer: { justifyContent: 'center', marginVertical: 12 },
+	contentContainer: { flex: 1 },
+	error: { color: '#e11d48', textAlign: 'center', marginTop: 12, fontFamily: 'Poppins-Regular' },
 });

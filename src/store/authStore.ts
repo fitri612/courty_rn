@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { tokenStorage } from "@/lib/secureStore";
+import { authStorage } from "@/lib/authStore";
 import { User } from "../api/types";
 
 interface AuthState {
@@ -18,18 +18,31 @@ export const useAuthStore = create<AuthState>((set) => ({
   isHydrated: false,
 
   hydrate: async () => {
-    const token = await tokenStorage.get();
-    set({ token, isHydrated: true });
+    const session = await authStorage.get();
+
+    set({
+      token: session?.token ?? null,
+      user: session?.user ?? null,
+      isHydrated: true,
+    });
   },
 
   setSession: async (token, user) => {
-    await tokenStorage.set(token);
-    set({ token, user });
+    await authStorage.set(token, user);
+
+    set({
+      token,
+      user,
+    });
   },
 
   clearSession: async () => {
-    await tokenStorage.remove();
-    set({ token: null, user: null });
+    await authStorage.remove();
+
+    set({
+      token: null,
+      user: null,
+    });
   },
 }));
 

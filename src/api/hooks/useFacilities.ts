@@ -3,10 +3,6 @@ import { apiClient } from "../client";
 import { endpoints } from "../endpoints";
 import { Facility, FacilityFilters, PaginatedResponse } from "../types";
 
-/**
- * Infinite-scroll friendly facility list. Pass search/sport/city filters and
- * this handles pagination via `fetchNextPage`.
- */
 export function useFacilities(filters: Omit<FacilityFilters, "page">) {
   return useInfiniteQuery({
     queryKey: ["facilities", filters],
@@ -16,7 +12,6 @@ export function useFacilities(filters: Omit<FacilityFilters, "page">) {
         { params: { ...filters, page: pageParam, limit: filters.limit ?? 10 } }
       );
 
-      console.log("facilities", data);
       return data;
     },
     initialPageParam: 1,

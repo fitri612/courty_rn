@@ -1,8 +1,9 @@
+import { Ionicons } from "@expo/vector-icons";
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from "react";
-import { Animated, StyleSheet, Text } from "react-native";
+import { Animated, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-type ToastType = "success" | "error";
+type ToastType = "success" | "error" | "warning" | "info";
 
 interface ToastMessage {
   text: string;
@@ -13,17 +14,25 @@ export interface ToastHandle {
   show: (text: string, type?: ToastType) => void;
 }
 
+// Map ikon berdasarkan tipe toast
+const TOAST_ICONS: Record<ToastType, keyof typeof Ionicons.glyphMap> = {
+  success: "checkmark-circle",
+  error: "alert-circle",
+  warning: "warning",
+  info: "information-circle",
+};
+
 export const Toast = forwardRef<ToastHandle>((_props, ref) => {
   const insets = useSafeAreaInsets();
   const [message, setMessage] = useState<ToastMessage | null>(null);
   const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(-16)).current;
+  const translateY = useRef(new Animated.Value(-20)).current;
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const hide = useCallback(() => {
     Animated.parallel([
       Animated.timing(opacity, { toValue: 0, duration: 200, useNativeDriver: true }),
-      Animated.timing(translateY, { toValue: -16, duration: 200, useNativeDriver: true }),
+      Animated.timing(translateY, { toValue: -20, duration: 200, useNativeDriver: true }),
     ]).start(() => setMessage(null));
   }, [opacity, translateY]);
 
@@ -32,12 +41,12 @@ export const Toast = forwardRef<ToastHandle>((_props, ref) => {
       if (hideTimer.current) clearTimeout(hideTimer.current);
       setMessage({ text, type });
       opacity.setValue(0);
-      translateY.setValue(-16);
+      translateY.setValue(-20);
       Animated.parallel([
-        Animated.timing(opacity, { toValue: 1, duration: 200, useNativeDriver: true }),
-        Animated.timing(translateY, { toValue: 0, duration: 200, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 1, duration: 250, useNativeDriver: true }),
+        Animated.timing(translateY, { toValue: 0, duration: 250, useNativeDriver: true }),
       ]).start();
-      hideTimer.current = setTimeout(hide, 2500);
+      hideTimer.current = setTimeout(hide, 3000);
     },
   }));
 
@@ -48,11 +57,14 @@ export const Toast = forwardRef<ToastHandle>((_props, ref) => {
       pointerEvents="none"
       style={[
         styles.container,
-        { top: insets.top + 8, opacity, transform: [{ translateY }] },
-        message.type === "error" ? styles.error : styles.success,
+        { top: insets.top + 10, opacity, transform: [{ translateY }] },
+        styles[message.type],
       ]}
     >
-      <Text style={styles.text}>{message.text}</Text>
+      <View style={styles.contentContainer}>
+        <Ionicons name={TOAST_ICONS[message.type]} size={20} color="#FFFFFF" style={styles.icon} />
+        <Text style={styles.text}>{message.text}</Text>
+      </View>
     </Animated.View>
   );
 });
@@ -74,17 +86,33 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 16,
     right: 16,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingVertical: 12,
     paddingHorizontal: 16,
-    zIndex: 999,
-    elevation: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
+    zIndex: 9999,
+    elevation: 6,
+    shadowColor: "#0F172A",
+    shadowOpacity: 0.18,
+    shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
   },
-  success: { backgroundColor: "#16A34A" },
-  error: { backgroundColor: "#DC2626" },
-  text: { color: "#fff", fontWeight: "600", textAlign: "center" },
+  contentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  icon: {
+    marginRight: 10,
+  },
+  text: {
+    color: "#FFFFFF",
+    fontSize: 14,
+    fontFamily: "Poppins-Medium",
+    flexShrink: 1,
+  },
+  // Style Warna Latar Belakang
+  success: { backgroundColor: "#10B981" },
+  info: { backgroundColor: "#3B82F6" },
+  warning: { backgroundColor: "#F59E0B" },
+  error: { backgroundColor: "#EF4444" },
 });
