@@ -2,21 +2,34 @@
 
 Courtly is a mobile application built with **Expo, React Native, and TypeScript** for managing and discovering futsal court activities.
 
-The project uses modern React Native and Expo technologies to provide a smooth mobile experience, including secure authentication storage, optimized image rendering, haptic feedback, gradient-based UI, and controlled application initialization.
+The application uses modern React Native and Expo technologies to provide a smooth user experience, including secure authentication storage, optimized image rendering, haptic feedback, shimmer skeleton loading, and controlled application initialization.
+
+## 🎥 Demo
+### Video Demo
+Watch the complete application flow:
+> 📹 [Watch Courtly Demo Video](https://drive.google.com/file/d/1s3r2sNAILz2l_DMcjDr7pQN05KTtTGBk/view?usp=sharing)
+
+### 📸 Application Screenshots
+View the application screenshots and UI preview:
+> 🖼️ [View Courtly Screenshots](https://drive.google.com/file/d/1EXJ43UL_Z9heoQFAfN0HOPHdyvDwHizz/view?usp=sharing)
+
+
+---
 
 ## 🚀 Tech Stack
 
-- **React Native** `0.86.3`
-- **Expo SDK** `57`
-- **Expo Router** - File-based navigation
-- **TypeScript**
-- **React Hook Form** - Form management
-- **Zod** - Form validation
-- **TanStack React Query** - Server state management
-- **Axios** - HTTP client
-- **Zustand** - Client state management
-- **React Native Reanimated** - Animations
-- **Reactotron** - Development and debugging
+* **React Native** `0.86.3`
+* **Expo SDK** `57`
+* **Java 17 (Minimum)** `57`
+* **Expo Router** - File-based navigation
+* **TypeScript** - Static type checking
+* **React Hook Form** - Form management
+* **Zod** - Form validation
+* **TanStack React Query** - Server state management
+* **Axios** - HTTP client
+* **Zustand** - Client state management
+* **React Native Reanimated** - Animations
+* **Reactotron** - Development and debugging
 
 ---
 
@@ -32,11 +45,9 @@ node --version
 
 The project requires a Node.js version compatible with **Expo SDK 57**.
 
-### Package Manager
+### Yarn
 
-This project uses **Yarn**.
-
-Check your Yarn version:
+This project uses **Yarn** as the package manager.
 
 ```bash
 yarn --version
@@ -52,7 +63,7 @@ yarn install
 
 ## 🛠️ Installation
 
-Clone the repository and install the dependencies:
+Clone the repository:
 
 ```bash
 git clone <repository-url>
@@ -66,13 +77,13 @@ Create a `.env` file in the project root:
 EXPO_PUBLIC_API_BASE_URL=<your-api-url>
 ```
 
-> Do not store private API keys, passwords, database credentials, or other secrets in `EXPO_PUBLIC_*` variables because these values can be exposed to the client application.
+> **Note:** Do not store private API keys, passwords, database credentials, or other secrets in `EXPO_PUBLIC_*` variables because these values can be exposed to the client application.
 
 ---
 
 ## ▶️ Running the Application
 
-### Start Expo Development Server
+### Start Development Server
 
 ```bash
 yarn start
@@ -90,27 +101,21 @@ yarn android
 yarn ios
 ```
 
-### Web
-
-```bash
-yarn web
-```
-
 > **Note:** Running the native Android/iOS application requires the corresponding development environment, such as Android Studio/SDK or Xcode.
 
 ---
 
 # 📱 Expo SDK Modules
 
-Courtly integrates **5 Expo SDK modules** beyond core React Native to improve security, performance, user experience, and application initialization.
+Courtly integrates **5 Expo SDK modules** beyond core React Native. These modules are used to improve application security, performance, user experience, and initialization.
 
-| Expo Module            | Purpose               | Why We Use It                                             |
-| ---------------------- | --------------------- | --------------------------------------------------------- |
-| `expo-secure-store`    | Secure storage        | Stores authentication `token` and `user` data securely    |
-| `expo-image`           | Image rendering       | Provides optimized image loading and caching              |
-| `expo-haptics`         | Haptic feedback       | Provides tactile feedback for user interactions           |
-| `expo-linear-gradient` | Gradient UI           | Creates visually rich backgrounds and UI elements         |
-| `expo-splash-screen`   | Splash screen control | Keeps the splash screen visible while the app initializes |
+| Expo Module            | Purpose               | Why We Use It                                          |
+| ---------------------- | --------------------- | ------------------------------------------------------ |
+| `expo-secure-store`    | Secure storage        | Stores authentication `token` and `user` data securely |
+| `expo-image`           | Image rendering       | Provides optimized image loading and caching           |
+| `expo-haptics`         | Haptic feedback       | Provides tactile feedback for user interactions        |
+| `expo-linear-gradient` | Shimmer loading       | Supports shimmer skeleton loading effects              |
+| `expo-splash-screen`   | Splash screen control | Controls the splash screen during app initialization   |
 
 ### 1. `expo-secure-store`
 
@@ -119,15 +124,15 @@ Courtly integrates **5 Expo SDK modules** beyond core React Native to improve se
 Courtly uses `expo-secure-store` to store the user's **`token`** and **`user`** information. **Zustand** manages the authentication state, while **`isHydrated`** indicates whether the persisted authentication data has been restored when the application starts.
 
 ```tsx
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
-// Save authentication data
-await SecureStore.setItemAsync('token', token);
-await SecureStore.setItemAsync('user', JSON.stringify(user));
+// save auth data
+await SecureStore.setItemAsync("token", token);
+await SecureStore.setItemAsync("user", JSON.stringify(user));
 
-// Restore authentication data
-const token = await SecureStore.getItemAsync('token');
-const userData = await SecureStore.getItemAsync('user');
+// restore auth data
+const token = await SecureStore.getItemAsync("token");
+const userData = await SecureStore.getItemAsync("user");
 
 const user = userData ? JSON.parse(userData) : null;
 ```
@@ -138,16 +143,20 @@ const user = userData ? JSON.parse(userData) : null;
 | `user`       | Information about the authenticated user                                      |
 | `isHydrated` | Zustand state indicating that persisted authentication data has been restored |
 
-**Why:** `expo-secure-store` provides platform-specific secure storage on Android and iOS, while Zustand manages the authentication state and hydration process.
+**Why:** SecureStore provides platform-specific secure storage on Android and iOS, while Zustand manages the authentication state and hydration process.
 
 ### 2. `expo-image`
 
 **Purpose:** Efficient image rendering and caching.
 
 ```tsx
-import { Image } from 'expo-image';
+import { Image } from "expo-image";
 
-<Image source={{ uri: imageUrl }} style={{ width: 100, height: 100 }} contentFit="cover" />;
+<Image
+  source={{ uri: imageUrl }}
+  style={{ width: 100, height: 100 }}
+  contentFit="cover"
+/>
 ```
 
 **Why:** Courtly uses images such as user avatars and other visual content. `expo-image` provides optimized image loading and caching.
@@ -157,9 +166,11 @@ import { Image } from 'expo-image';
 **Purpose:** Provide tactile feedback during user interactions.
 
 ```tsx
-import * as Haptics from 'expo-haptics';
+import * as Haptics from "expo-haptics";
 
-await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+await Haptics.impactAsync(
+  Haptics.ImpactFeedbackStyle.Light
+);
 ```
 
 **Why:** Haptic feedback makes interactions feel more responsive, especially for buttons, selections, and important actions.
@@ -168,20 +179,16 @@ await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
 **Purpose:** Support shimmer skeleton loading effects.
 
-```tsx
 Courtly uses `expo-linear-gradient` as part of the **shimmer skeleton UI** displayed while data is loading.
 
-**Why:**
-
-The gradient is used to create the moving highlight effect in skeleton placeholders, providing visual feedback that content is still loading and improving the overall user experience.
-```
+The gradient creates the moving highlight effect across skeleton placeholders, providing visual feedback that content is still loading and improving the overall user experience.
 
 ### 5. `expo-splash-screen`
 
 **Purpose:** Control the application splash screen during initialization.
 
 ```tsx
-import * as SplashScreen from 'expo-splash-screen';
+import * as SplashScreen from "expo-splash-screen";
 
 await SplashScreen.preventAutoHideAsync();
 
@@ -237,19 +244,19 @@ courtly/
 └── tsconfig.json
 ```
 
-This structure helps keep UI, state management, API communication, and reusable logic separated.
+This structure helps separate UI, state management, API communication, and reusable logic.
 
 ---
 
 ## 🔐 Authentication
 
-Authentication-related data is handled using:
+Authentication is handled using:
 
-- `expo-secure-store` for secure `token` and `user` storage
-- `axios` for API communication
-- `zustand` for client-side authentication state
-- `isHydrated` to track authentication state restoration
-- `expo-router` for navigation between authenticated and unauthenticated routes
+* `expo-secure-store` for secure `token` and `user` storage
+* `axios` for API communication
+* `zustand` for client-side authentication state
+* `isHydrated` to track authentication state restoration
+* `expo-router` for authenticated and unauthenticated navigation
 
 ### Authentication Flow
 
@@ -269,7 +276,7 @@ Set isHydrated = true
 Navigate to Application
 ```
 
-When the application starts, the stored authentication data is restored before the application determines the user's authentication state.
+When the application starts, the stored authentication data is restored before determining the user's authentication state.
 
 ---
 
@@ -281,33 +288,20 @@ The API base URL is configured through an environment variable:
 EXPO_PUBLIC_API_BASE_URL=<your-api-url>
 ```
 
-It can be accessed from the Expo application using:
+Access it from the Expo application:
 
 ```tsx
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
+const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_BASE_URL;
 ```
 
-> Do not put private API keys, passwords, database credentials, or other secrets in `EXPO_PUBLIC_*` variables because these values can be exposed to the client application.
-
----
-
-## 🧪 Code Quality
-
-Run linting with:
-
-```bash
-yarn lint
-```
-
-The project uses **TypeScript** to provide static type checking and improve code reliability.
+> **Note:** Do not put private API keys, passwords, database credentials, or other secrets in `EXPO_PUBLIC_*` variables.
 
 ---
 
 ## 🐞 Development & Debugging
 
-Courtly includes **Reactotron** for development debugging.
-
-Dependency:
+Courtly uses **Reactotron** for development and debugging.
 
 ```json
 "reactotron-react-native": "^5.3.1"
@@ -332,27 +326,12 @@ Reactotron can be used to inspect application state and debug React Native behav
 
 ## 📚 Useful Documentation
 
-- [Expo Documentation](https://docs.expo.dev/)
-- [Expo SDK 57](https://docs.expo.dev/versions/latest/)
-- [Expo Router](https://docs.expo.dev/router/introduction/)
-- [Expo SecureStore](https://docs.expo.dev/versions/latest/sdk/securestore/)
-- [Expo Image](https://docs.expo.dev/versions/latest/sdk/image/)
-- [Expo Haptics](https://docs.expo.dev/versions/latest/sdk/haptics/)
-- [Expo LinearGradient](https://docs.expo.dev/versions/latest/sdk/linear-gradient/)
-- [Expo SplashScreen](https://docs.expo.dev/versions/latest/sdk/splash-screen/)
+* [Expo Documentation](https://docs.expo.dev/)
+* [Expo Router](https://docs.expo.dev/router/introduction/)
+* [Expo SecureStore](https://docs.expo.dev/versions/latest/sdk/securestore/)
+* [Expo Image](https://docs.expo.dev/versions/latest/sdk/image/)
+* [Expo Haptics](https://docs.expo.dev/versions/latest/sdk/haptics/)
+* [Expo LinearGradient](https://docs.expo.dev/versions/latest/sdk/linear-gradient/)
+* [Expo SplashScreen](https://docs.expo.dev/versions/latest/sdk/splash-screen/)
 
 ---
-
-## 👋 About Courtly
-
-Courtly is built with a focus on providing a smooth and modern mobile experience for futsal-related activities.
-
-The application combines Expo's native capabilities with modern React Native libraries for:
-
-- Secure authentication
-- Efficient data fetching
-- Form validation
-- Responsive UI
-- Native interactions
-- Application state management
-- Optimized image rendering
