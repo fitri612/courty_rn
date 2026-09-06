@@ -15,6 +15,7 @@ Watch the complete application flow :
 
 * **React Native** `0.86.3`
 * **Expo SDK** `57`
+* **Java 17 (Minimum)** `57`
 * **Expo Router** - File-based navigation
 * **TypeScript** - Static type checking
 * **React Hook Form** - Form management
@@ -93,12 +94,6 @@ yarn android
 
 ```bash
 yarn ios
-```
-
-### Web
-
-```bash
-yarn web
 ```
 
 > **Note:** Running the native Android/iOS application requires the corresponding development environment, such as Android Studio/SDK or Xcode.
@@ -296,18 +291,6 @@ const API_BASE_URL =
 ```
 
 > **Note:** Do not put private API keys, passwords, database credentials, or other secrets in `EXPO_PUBLIC_*` variables.
-
----
-
-## 🧪 Code Quality
-
-Run linting with:
-
-```bash
-yarn lint
-```
-
-The project uses **TypeScript** for static type checking and improved code reliability.
 
 ---
 
