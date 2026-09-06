@@ -164,17 +164,17 @@ await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
 
 **Why:** Haptic feedback makes interactions feel more responsive, especially for buttons, selections, and important actions.
 
-### `expo-linear-gradient`
+### 4. `expo-linear-gradient`
 
 **Purpose:** Support shimmer skeleton loading effects.
 
+```tsx
 Courtly uses `expo-linear-gradient` as part of the **shimmer skeleton UI** displayed while data is loading.
 
 **Why:**
 
 The gradient is used to create the moving highlight effect in skeleton placeholders, providing visual feedback that content is still loading and improving the overall user experience.
-
-**Why:** Gradients are used to improve the visual hierarchy and appearance of the application's UI.
+```
 
 ### 5. `expo-splash-screen`
 
