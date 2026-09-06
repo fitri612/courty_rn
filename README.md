@@ -6,8 +6,13 @@ The application uses modern React Native and Expo technologies to provide a smoo
 
 ## 🎥 Demo
 ### Video Demo
-Watch the complete application flow :
-> 📹 https://drive.google.com/file/d/1s3r2sNAILz2l_DMcjDr7pQN05KTtTGBk/view?usp=sharing
+Watch the complete application flow:
+> 📹 [Watch Courtly Demo Video](https://drive.google.com/file/d/1s3r2sNAILz2l_DMcjDr7pQN05KTtTGBk/view?usp=sharing)
+
+### 📸 Application Screenshots
+View the application screenshots and UI preview:
+> 🖼️ [View Courtly Screenshots](https://drive.google.com/file/d/1EXJ43UL_Z9heoQFAfN0HOPHdyvDwHizz/view?usp=sharing)
+
 
 ---
 
