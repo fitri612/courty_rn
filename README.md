@@ -5,6 +5,9 @@ Courtly is a mobile application built with **Expo, React Native, and TypeScript*
 The application uses modern React Native and Expo technologies to provide a smooth user experience, including secure authentication storage, optimized image rendering, haptic feedback, shimmer skeleton loading, and controlled application initialization.
 
 ## 🎥 Demo
+### APK
+https://expo.dev/artifacts/eas/5EoCb6Q9ZKCbMKlIxr-Rn6FO0_qccWXihigKDi4HMh8.apk
+
 ### Video Demo
 Watch the complete application flow:
 > 📹 [Watch Courtly Demo Video](https://drive.google.com/file/d/1s3r2sNAILz2l_DMcjDr7pQN05KTtTGBk/view?usp=sharing)
